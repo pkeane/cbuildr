@@ -3,6 +3,15 @@
   <head>
     <link href="css/bootstrap.css" rel="stylesheet">
     <style>
+      ::-moz-selection{
+        background-color:Transparent;
+        color:#000;
+      }
+
+      ::selection {
+        background-color:Transparent;
+        color:#000;
+      }
       .clear {
         background-color: #fff;
       }
@@ -34,6 +43,15 @@
         return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
       }
       $(function() {
+        var isMouseDown = false
+
+        $('body').mousedown(function() {
+          isMouseDown = true;
+        })
+        .mouseup(function() {
+          isMouseDown = false;
+        });
+
         var canvas = document.getElementById('canvas');
         if (canvas.getContext) {
           var ctx = canvas.getContext("2d");
@@ -42,9 +60,8 @@
         $('table#palette td.clear').each(function() {
           palette_colors[rgb2hex($(this).css('background-color'))] = 1;
         });
-        $('table#base td').click(function() {
-          var color = $('#color').val();
-          $(this).css('background-color',color);
+        $('#color').change(function() {
+          var color = $(this).val();
           var found = 0;
           $('table#palette td.clear').each(function() {
             if(!found && !palette_colors[color] && $(this).hasClass('clear')) {
@@ -54,6 +71,16 @@
             }
           });
         });
+        $('table#base td').click(function() {
+          var color = $('#color').val();
+          $(this).css('background-color',color);
+        });
+        $('table#base td').mouseenter(function() {
+          var color = $('#color').val();
+          if(isMouseDown)
+          $(this).css('background-color',color);
+        });
+
         $('table#palette td').click(function() {
           $('#color').val(rgb2hex($(this).css('background-color')));
         });
